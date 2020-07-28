@@ -21,7 +21,7 @@ pipeline {
     } 
     
     
-      stage ('OWASP Dependency Check Analysis') {
+      stage ('OWASP Dependency Check') {
       steps {
          sh 'rm owasp* || true'
          sh 'wget "https://raw.githubusercontent.com/johnsimon007/Simple-CI-CD-Pipeline/master/owasp-dependency-check.sh" '
