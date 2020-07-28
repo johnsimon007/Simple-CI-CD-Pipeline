@@ -12,7 +12,13 @@ pipeline {
             ''' 
       }
     }
-    
+       stage ('Check-Git-Secrets') {
+      steps {
+        sh 'rm trufflehog || true'
+        sh 'docker run gesellix/trufflehog --json https://github.com/johnsimon007/Simple-CI-CD-Pipeline.git > trufflehog'
+        sh 'cat trufflehog'
+      }
+    } 
     
     
       stage ('OWASP Dependency Check Analysis') {
@@ -24,7 +30,14 @@ pipeline {
          sh 'cat /var/lib/jenkins/OWASP-Dependency-Check/reports/dependency-check-report.xml'
         }
       }
-    
+     stage ('SAST') {
+		steps {
+		withSonarQubeEnv('sonar') {
+			sh 'mvn clean install sonar:sonar'
+			sh 'cat target/sonar/report-task.txt'
+		       }
+		}
+	}
    
     
     stage ('Build') {
