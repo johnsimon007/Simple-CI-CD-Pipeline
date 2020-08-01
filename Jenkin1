@@ -24,6 +24,7 @@ pipeline {
            sshagent(['deployment']) {
                 sh '''
                 scp -o StrictHostKeyChecking=no target/*.war dev@10.201.14.13 uptime
+                devdev
                 '''
               }      
            }       
