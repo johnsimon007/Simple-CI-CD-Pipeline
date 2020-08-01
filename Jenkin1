@@ -21,12 +21,9 @@ pipeline {
     
     stage ('Deploy-To-Tomcat') {
             steps {
-            sh '''
-                ssh dev@10.201.14.13
-                dev
-                '''
-              }     
-                  
-    }   
-  }
+           sshagent(['deployment']) {
+                sh 'scp -o StrictHostKeyChecking=no target/*.war dev@10.201.14.13:/opt/tomcat/webapps/webapp.war'
+              }      
+           }       
+    }
 }
