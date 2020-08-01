@@ -23,7 +23,7 @@ pipeline {
             steps {
                  sshagent(['deployment']){
           
-                  sh 'scp -o StrictHostKeyChecking=no -o PubkeyAuthentication=no target/*.war dev@10.201.14.13:/opt/tomcat/webapps/WebApp.war'
+                  sh 'scp -o StrictHostKeyChecking=no -o PubkeyAuthentication=no target/WebApp.war dev@10.201.14.13:/opt/tomcat/webapps/WebApp.war'
                 
                
                   }        }       
