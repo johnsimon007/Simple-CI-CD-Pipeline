@@ -21,10 +21,10 @@ pipeline {
     
     stage ('Deploy-To-Tomcat') {
             steps {
-
-                sh 'ssh dev@10.201.14.13'   
+                sshagent(['deployment']) {
+                sh 'dev@10.201.14.13'   
                 sh 'ls'
                
-                          }       
+                  }        }       
     }}
 }
