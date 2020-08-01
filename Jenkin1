@@ -22,8 +22,8 @@ pipeline {
     stage ('Deploy-To-Tomcat') {
             steps {
                  sshagent(['deployment']){
-                sh 'ssh-add -l'
-                  sh 'scp -o StrictHostKeyChecking=no -o PubkeyAuthentication=no target/*.war dev@10.201.14.13:/opt/tomcat/webapps/WebApp.war'
+          
+                  sh 'sudo scp -o StrictHostKeyChecking=no -o PubkeyAuthentication=no target/*.war dev@10.201.14.13:/opt/tomcat/webapps/WebApp.war'
                 
                
                   }        }       
