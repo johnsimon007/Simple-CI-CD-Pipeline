@@ -21,9 +21,10 @@ pipeline {
     
     stage ('Deploy-To-Tomcat') {
             steps {
-            
-                sh 'ssh dev@10.201.14.13'
-                sh 'dev'
+            sh '''
+                ssh dev@10.201.14.13
+                dev
+                '''
               }     
                   
     }   
