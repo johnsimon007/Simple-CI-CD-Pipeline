@@ -19,7 +19,7 @@ pipeline {
             steps {
                  sshagent(['deployment']){
           
-                  sh 'scp WebApp.war dev@10.201.14.13:/opt/tomcat/webapps/WebApp.war'
+                  sh 'scp WebApp.war dev@10.201.14.13:/home/dev/'
                 
                
                   }        }       
