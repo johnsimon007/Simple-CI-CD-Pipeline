@@ -17,10 +17,11 @@ pipeline {
     
     stage ('Deploy-To-Tomcat') {
             steps {
-       
+        steps {
+           sshagent(['deployment']) {
           
-                  sh 'scp -o PubkeyAuthentication=no -p Password=no WebApp.war dev@10.201.14.13:/home/dev/'
-                
+                  sh 'scp -o StrictHostKeyChecking=no -o PubkeyAuthentication=no  WebApp.war dev@10.201.14.13:/home/dev/'
+                }
                
                   }        
     }}
