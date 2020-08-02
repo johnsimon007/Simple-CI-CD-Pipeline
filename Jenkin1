@@ -19,7 +19,7 @@ pipeline {
             steps {
        
           
-                  sh 'scp -o PreferredAuthentications=password -o PubkeyAuthentication=no WebApp.war dev@10.201.14.13:/home/dev/'
+                  sh 'scp WebApp.war dev@10.201.14.13:/home/dev/'
                 
                
                   }        
