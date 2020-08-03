@@ -19,7 +19,6 @@ pipeline {
             steps {
             sh '''
                rm -r /opt/tomcat/webapps/WebApp.war
-               rm -r /opt/tomcat/webapps/WebApp
                cp /var/lib/jenkins/workspace/'Simple Deployment'/target/WebApp.war /opt/tomcat/webapps/
                '''
                  
