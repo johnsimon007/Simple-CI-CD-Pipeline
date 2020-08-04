@@ -61,7 +61,7 @@ pipeline {
 			sh 'cat nmap'
 		    }
 	    }
-	stage('SAST') {
+	stage('DAST') {
    	 parallel {
 	    stage ('Zap Scan') {
 		  
