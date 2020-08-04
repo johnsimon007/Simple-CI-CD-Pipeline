@@ -91,7 +91,7 @@ pipeline {
 	 stage ('Upload Reports to Defect Dojo') {
 		    steps {
 			sh 'pip install requests'
-			sh 'wget https://raw.githubusercontent.com/devopssecure/webapp/master/upload-results.py'
+			sh 'wget https://raw.githubusercontent.com/johnsimon007/Simple-CI-CD-Pipeline/master/upload-results.py'
 			sh 'chmod +x upload-results.py'
 			sh 'python upload-results.py --host 127.0.0.1:8000 --api_key 55fded8dc2be27bbef332378c45c3f6775bb5356 --engagement_id 2 --result_file trufflehog --username admin --scanner "Git Screts"'
 			sh 'python upload-results.py --host 127.0.0.1:8000 --api_key 55fded8dc2be27bbef332378c45c3f6775bb5356 --engagement_id 2 --result_file /var/lib/jenkins/OWASP-Dependency-Check/reports/dependency-check-report.xml --username admin --scanner "Dependency Check Scan"'
