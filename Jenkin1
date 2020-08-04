@@ -12,18 +12,16 @@ pipeline {
             ''' 
       }
     }
-    stage('Run Tests') {
+    stage('SAST') {
     parallel {
-       stage ('Check-Git-Secrets') {
+       stage ('Secrets Check') {
       steps {
         sh 'rm trufflehog || true'
         sh 'docker run gesellix/trufflehog --json https://github.com/johnsimon007/Simple-CI-CD-Pipeline.git > trufflehog'
         sh 'cat trufflehog'
       }
     } 
-    
-    
-      stage ('OWASP Dependency Check') {
+    stage ('Dependency Check') {
       steps {
          sh 'rm owasp* || true'
          sh 'wget "https://raw.githubusercontent.com/johnsimon007/Simple-CI-CD-Pipeline/master/owasp-dependency-check.sh" '
@@ -32,32 +30,63 @@ pipeline {
          sh 'cat /var/lib/jenkins/OWASP-Dependency-Check/reports/dependency-check-report.xml'
         }
       }
-     stage ('SAST') {
+     stage ('Secure Code Review') {
 		steps {
 		withSonarQubeEnv('sonar') {
 			sh 'mvn clean install sonar:sonar'
 			sh 'cat target/sonar/report-task.txt'
-		       }
+		       		}
+			}
 		}
-	}
-  }
+  	}
   }
      stage ('Build') {
       steps {
       sh 'mvn clean package'
        }
     }
-    
-    
-    stage ('Deploy-To-Tomcat') {
+      stage ('Deploy-To-Tomcat') {
             steps {
             sh '''
                rm -r /opt/tomcat/webapps/WebApp.war
                cp /var/lib/jenkins/workspace/'Simple Deployment'/target/WebApp.war /opt/tomcat/webapps/
                '''
-                 
-               
-               
-                  }        
-    }}
+	       }        
+    	}
+	
+    stage ('Port Scan') {
+		    steps {
+			sh 'rm nmap* || true'
+			sh 'docker run --rm -v "$(pwd)":/data uzyexe/nmap -sS -sV -oX nmap 125.16.130.146'
+			sh 'cat nmap'
+		    }
+	    }
+	stage('SAST') {
+   	 parallel {
+	    stage ('Zap Scan') {
+		  
+		    	steps {
+			      sh 'docker run -t owasp/zap2docker-stable zap-baseline.py -t http://10.201.14.15:8081/WebApp/ || true'
+			    }
+			
+		}    
+	
+	    stage ('Nikto Scan') {
+		    steps {
+			sh 'rm nikto-output.xml || true'
+			sh 'docker pull secfigo/nikto:latest'
+			sh 'docker run secfigo/nikto:latest -h 10.201.14.15 -p 8081 -output /report/nikto-output.xml'
+			 
+		    }
+	    }
+	    
+	    stage ('SSL Checks') {
+		    steps {
+			sh 'python -m sslyze --regular 13.232.19.97:443 --json_out sslyze-output.json'
+			sh 'cat sslyze-output.json'
+				}
+		   	 }
+	   	}
+	}   
+     }
 }
