@@ -14,13 +14,7 @@ pipeline {
     }
     stage('SAST') {
     parallel {
-       stage ('Secrets Check') {
-      steps {
-        sh 'rm trufflehog || true'
-        sh 'docker run gesellix/trufflehog --json https://github.com/johnsimon007/Simple-CI-CD-Pipeline.git > trufflehog'
-        sh 'cat trufflehog'
-      }
-    } 
+      
     stage ('Dependency Check') {
       steps {
          sh 'rm owasp* || true'
@@ -67,6 +61,7 @@ pipeline {
 		  
 		    	steps {
 			      sh 'docker run -t owasp/zap2docker-stable zap-baseline.py -t http://10.201.14.15:8081/WebApp/ || true'
+			      sh 'cat zap'
 			    }
 			
 		}    
@@ -76,7 +71,7 @@ pipeline {
 			sh 'rm nikto-output.xml || true'
 			sh 'docker pull secfigo/nikto:latest'
 			sh 'docker run secfigo/nikto:latest -h 10.201.14.15 -p 8081 -output /report/nikto-output.xml'
-			 
+			 sh 'cat /report/nikto-output.xml'
 		    }
 	    }
 	    
