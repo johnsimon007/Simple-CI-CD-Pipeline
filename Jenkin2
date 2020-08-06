@@ -48,7 +48,7 @@ pipeline {
       stage ('Deploy-To-Tomcat') {
             steps {
             sh '''
-               rm -r /opt/tomcat/webapps/WebApp.war
+               rm -r /opt/tomcat/webapps/WebApp.war || true
                cp /var/lib/jenkins/workspace/'Simple Deployment'/target/WebApp.war /opt/tomcat/webapps/
                '''
 	       }        
