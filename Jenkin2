@@ -94,10 +94,10 @@ pipeline {
 			sh 'pip install requests'
 			sh 'wget https://raw.githubusercontent.com/johnsimon007/Simple-CI-CD-Pipeline/master/upload-results.py'
 			sh 'chmod +x upload-results.py'
-			sh 'python upload-results.py --host 127.0.0.1:8000 --api_key f7b5409fa545e8a65ea62d3e7f1abd25787b3982 --engagement_id 1 --result_file trufflehog --username admin --scanner "Git Screts"'
-			sh 'python upload-results.py --host 127.0.0.1:8000 --api_key f7b5409fa545e8a65ea62d3e7f1abd25787b3982 --engagement_id 1 --result_file /var/lib/jenkins/OWASP-Dependency-Check/reports/dependency-check-report.xml --username admin --scanner "Dependency Check Scan"'
-			sh 'python upload-results.py --host 127.0.0.1:8000 --api_key f7b5409fa545e8a65ea62d3e7f1abd25787b3982 --engagement_id 1 --result_file nmap --username admin --scanner "Nmap Scan"'
-			sh 'python upload-results.py --host 127.0.0.1:8000 --api_key f7b5409fa545e8a65ea62d3e7f1abd25787b3982 --engagement_id 1 --result_file sslyze-output.json --username admin --scanner "SSL Labs Scan"'
+			sh 'python upload-results.py --host 127.0.0.1:8092 --api_key f7b5409fa545e8a65ea62d3e7f1abd25787b3982 --engagement_id 1 --result_file trufflehog --username admin --scanner "Git Screts"'
+			sh 'python upload-results.py --host 127.0.0.1:8092 --api_key f7b5409fa545e8a65ea62d3e7f1abd25787b3982 --engagement_id 1 --result_file /var/lib/jenkins/OWASP-Dependency-Check/reports/dependency-check-report.xml --username admin --scanner "Dependency Check Scan"'
+			sh 'python upload-results.py --host 127.0.0.1:8092 --api_key f7b5409fa545e8a65ea62d3e7f1abd25787b3982 --engagement_id 1 --result_file nmap --username admin --scanner "Nmap Scan"'
+			sh 'python upload-results.py --host 127.0.0.1:8092 --api_key f7b5409fa545e8a65ea62d3e7f1abd25787b3982 --engagement_id 1 --result_file sslyze-output.json --username admin --scanner "SSL Labs Scan"'
 			
 			    
 		    }
