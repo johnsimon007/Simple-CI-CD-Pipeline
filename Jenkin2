@@ -1,0 +1,106 @@
+pipeline {
+  agent any 
+  tools {
+    maven 'Maven'
+  }
+  stages {
+    stage ('Initialize') {
+      steps {
+        sh '''
+                    echo "PATH = ${PATH}"
+                    echo "M2_HOME = ${M2_HOME}"
+            ''' 
+      }
+    }
+    stage('SAST') {
+    parallel {
+       stage ('Secrets Check') {
+      steps {
+        sh 'rm trufflehog || true'
+        sh 'docker run gesellix/trufflehog --json https://github.com/johnsimon007/Simple-CI-CD-Pipeline.git > trufflehog'
+        sh 'cat trufflehog'
+      }
+    } 
+    stage ('Dependency Check') {
+      steps {
+         sh 'rm owasp* || true'
+         sh 'wget "https://raw.githubusercontent.com/johnsimon007/Simple-CI-CD-Pipeline/master/owasp-dependency-check.sh" '
+         sh 'chmod +x owasp-dependency-check.sh'
+         sh 'bash owasp-dependency-check.sh'
+         sh 'cat /var/lib/jenkins/OWASP-Dependency-Check/reports/dependency-check-report.xml'
+        }
+      }
+     stage ('Secure Code Review') {
+		steps {
+		withSonarQubeEnv('sonar') {
+			sh 'mvn clean install sonar:sonar'
+			sh 'cat target/sonar/report-task.txt'
+		       		}
+			}
+		}
+  	}
+  }
+     stage ('Build') {
+      steps {
+      sh 'mvn clean package'
+       }
+    }
+      stage ('Deploy-To-Tomcat') {
+            steps {
+            sh '''
+               rm -r /opt/tomcat/webapps/WebApp.war
+               cp /var/lib/jenkins/workspace/'Simple Deployment'/target/WebApp.war /opt/tomcat/webapps/
+               '''
+	       }        
+    	}
+	stage('DAST') {
+   	 parallel {
+   		 stage ('Port Scan') {
+		    steps {
+			sh 'rm nmap* || true'
+			sh 'docker run --rm -v "$(pwd)":/data uzyexe/nmap -sS -sV -oX nmap 125.16.130.146'
+			sh 'cat nmap'
+		    }
+	    }
+	
+	    stage ('Zap Scan') {
+		  
+		    	steps {
+			      sh 'docker run -t owasp/zap2docker-stable zap-baseline.py -t http://10.201.14.15:8081/WebApp/ || true'
+			    }
+			
+		}    
+	
+	    stage ('Nikto Scan') {
+		    steps {
+			sh 'rm nikto-output.xml || true'
+			sh 'docker pull secfigo/nikto:latest'
+			sh 'docker run secfigo/nikto:latest -h 10.201.14.15 -p 8081 -output /report/nikto-output.xml'
+			 
+		    }
+	    }
+	    
+	    stage ('SSL Checks') {
+		    steps {
+        sh 'pip install sslyze==1.4.2'
+			sh 'python -m sslyze --regular 127.0.0.1:8080 --json_out sslyze-output.json'
+						sh 'cat sslyze-output.json'
+				}
+		   	 }
+	   	}
+	}
+	 stage ('Upload Reports to Defect Dojo') {
+		    steps {
+			sh 'pip install requests'
+			sh 'wget https://raw.githubusercontent.com/johnsimon007/Simple-CI-CD-Pipeline/master/upload-results.py'
+			sh 'chmod +x upload-results.py'
+			sh 'python upload-results.py --host 127.0.0.1:8000 --api_key f7b5409fa545e8a65ea62d3e7f1abd25787b3982 --engagement_id 1 --result_file trufflehog --username admin --scanner "Git Screts"'
+			sh 'python upload-results.py --host 127.0.0.1:8000 --api_key f7b5409fa545e8a65ea62d3e7f1abd25787b3982 --engagement_id 1 --result_file /var/lib/jenkins/OWASP-Dependency-Check/reports/dependency-check-report.xml --username admin --scanner "Dependency Check Scan"'
+			sh 'python upload-results.py --host 127.0.0.1:8000 --api_key f7b5409fa545e8a65ea62d3e7f1abd25787b3982 --engagement_id 1 --result_file nmap --username admin --scanner "Nmap Scan"'
+			sh 'python upload-results.py --host 127.0.0.1:8000 --api_key f7b5409fa545e8a65ea62d3e7f1abd25787b3982 --engagement_id 1 --result_file sslyze-output.json --username admin --scanner "SSL Labs Scan"'
+			
+			    
+		    }
+	    }
+     }
+}
