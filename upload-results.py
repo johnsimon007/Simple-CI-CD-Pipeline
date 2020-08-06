@@ -14,7 +14,7 @@ def upload_results(host, user, api_key, scanner, result_file, engagement_id, ver
 	files = dict()
 
 	# Prepare headers
-	# headers = {'Authorization': 'ApiKey dojo:3e24a3ee5af0305af20a5e6224052de3ed2f6859'}
+	# headers = {'Authorization': 'ApiKey admin:f7b5409fa545e8a65ea62d3e7f1abd25787b3982'}
 	headers['Authorization'] = AUTH_TOKEN
 	print headers
 
@@ -22,18 +22,18 @@ def upload_results(host, user, api_key, scanner, result_file, engagement_id, ver
 	# json= {
 	#   "minimum_severity": "Low",
 	#   "scan_date": datetime.now().strftime("%Y-%m-%d"),
-	#   "verified": True,
+	#   "verified": False,
 	#   "tags": "",
-	#   "active": True,
+	#   "active": False,
 	#   "engagement": "/api/v1/engagements/2/",
 	#   "lead":"/api/v1/users/1/",
 	#   "scan_type": "Bandit Scan"
 	# }
 	json['minimum_severity'] = "Low"
 	json['scan_date'] = datetime.now().strftime("%Y-%m-%d")
-	json['verified'] = True
+	json['verified'] = False
 	json['tags'] = ""
-	json['active'] = True
+	json['active'] = False
 	json['engagement'] = "/api/v1/engagements/"+ engagement_id + "/"
 	json['lead'] ="/api/v1/users/"+ "1" + "/"
 	json['scan_type'] = scanner
