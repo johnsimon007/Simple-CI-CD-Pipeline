@@ -20,7 +20,7 @@ def upload_results(host, user, api_key, scanner, result_file, engagement_id, ver
 
 	# Prepare JSON data to send to API
 	# json= {
-	#   "minimum_severity": "Low",
+	#   "minimum_severity": "Info",
 	#   "scan_date": datetime.now().strftime("%Y-%m-%d"),
 	#   "verified": False,
 	#   "tags": "",
