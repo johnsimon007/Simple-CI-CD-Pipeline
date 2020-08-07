@@ -29,7 +29,7 @@ def upload_results(host, user, api_key, scanner, result_file, engagement_id, ver
 	#   "lead":"/api/v1/users/1/",
 	#   "scan_type": "Bandit Scan"
 	# }
-	json['minimum_severity'] = "Low"
+	json['minimum_severity'] = "Info"
 	json['scan_date'] = datetime.now().strftime("%Y-%m-%d")
 	json['verified'] = False
 	json['tags'] = ""
